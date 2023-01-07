@@ -20,8 +20,11 @@ git remote add origin git@github.com:YIRJohnGit/sample-node-app.git
 git push -u origin main
 ```
 
+
 ### ...or push an existing repository from the command line
 ```
+git add .
+git commit -m "first commit"
 git remote add origin git@github.com:YIRJohnGit/sample-node-app.git
 git branch -M main
 git push -u origin main
