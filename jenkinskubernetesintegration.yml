@@ -8,7 +8,33 @@ pipeline {
 agent any
 
 stages {
-  stage('Checkout Source'){
-    git ''
+  stage('1 Checkout Source'){
+    steps{
+      git 'https://github.com/YIRJohnGit/sample-node-app.git'
+    }
   }
+  
+stage('2 Build Image'){
+    steps{
+      script {
+        dockerImage = docker.build dockerimagename
+      }
+    }
+  }
+  
+stage('Pushing Image'){
+    environment {
+       registryCredential='dockerhublogin'
+    }
+    steps{
+      script {
+        docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ){
+           dockerImage.push("latest")
+        }
+      }
+    }
+  }
+
+
+  
 }
