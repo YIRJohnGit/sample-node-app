@@ -11,7 +11,7 @@ pipeline {
         
         stage('1 Checkout Source') {
             steps {
-                git 'https://github.com/YIRJohnGit/sample-node-app.git'
+                git branch: 'main', url: 'https://github.com/YIRJohnGit/sample-git-pipeline.git'
             }
         }
         
