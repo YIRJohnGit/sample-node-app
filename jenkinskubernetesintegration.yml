@@ -1,48 +1,49 @@
 pipeline {
-  environment {
-    dockerimagename="thetips4you/nodeapp"
-    dockerImage=""
-  }
-}
-
-agent any
-
-stages {
-  stage('1 Checkout Source'){
-    steps{
-      git 'https://github.com/YIRJohnGit/sample-node-app.git'
-    }
-  }
-  
-stage('2 Build Image'){
-    steps{
-      script {
-        dockerImage = docker.build dockerimagename
-      }
-    }
-  }
-  
-stage('3 Pushing Image'){
+    
     environment {
-       registryCredential='yirdockerhublogin'
+        dockerimagename="thetips4you/nodeapp"
+        dockerImage=""
     }
-    steps{
-      script {
-        docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ){
-           dockerImage.push("latest")
+    
+    agent any
+    
+    stages {
+        
+        stage('1 Checkout Source') {
+            steps {
+                git 'https://github.com/YIRJohnGit/sample-node-app.git'
+            }
         }
-      }
+        
+        stage('2 Build Image') {
+            steps {
+                script {
+                    dockerImage = docker.build dockerimagename
+                }
+            }
+        }
+        
+        stage('3 Pushing Image') {
+            environment {
+                registryCredential = 'yirdockerhublogin'
+            }
+            steps {
+                script {
+                    docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+                        dockerImage.push("latest")
+                    }
+                }
+            }
+        }
+        
+        stage('4 Deploying App to Kubernetes') {
+            steps {
+                script {
+                    kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "yirkubernetes")
+                }
+            }
+        }
+        
+        
     }
-  }
-
-stage('4 Deploying App to Kubernetes'){
-    steps{
-      script {
-        kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "yirkubernetes")
-      }
-    }
-  }
-
-
-  
 }
